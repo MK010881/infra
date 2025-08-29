@@ -16,3 +16,4 @@
 
 # Crash logs
 crash.log
+*.exe
