@@ -1,0 +1,78 @@
+trigger: none
+
+pool: MK-agent
+
+stages:
+- stage: buildinitinstall
+  displayName: terraform install and init
+
+  jobs:
+  - job: Terraforminstallinit
+    displayName: Terraform Install and Init
+    steps:
+        
+    - task: TerraformInstaller@1
+      inputs:
+        terraformVersion: 'latest'
+
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/MapProject'
+        backendServiceArm: 'mkscon'
+        backendAzureRmResourceGroupName: 'rashi'
+        backendAzureRmStorageAccountName: 'rashistrg'
+        backendAzureRmContainerName: 'rashicont'
+        backendAzureRmKey: 'terraform.tfstate'
+    
+- stage: 
+  displayName: Terraform scanning
+
+  jobs:
+  - job: Terraforrscanning
+    displayName: Terraform scanning
+
+    steps:
+
+    
+
+    
+
+- stage: 
+  displayName: Terraform validate and Apply
+
+  jobs:
+  - job: Terrraformmanualvalidation
+    displayName: Manual Validation
+
+    steps:
+    
+    - task: ManualValidation@1
+      inputs:
+        notifyUsers: 'mkaz20252025@outlook.com'
+        approvers: 'mkaz20252025@outlook.com'
+
+  jobs:
+  - job: Terrraforminitapply
+    displayName: Terraform Init and Apply
+
+    steps:
+        
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/MapProject'
+        backendServiceArm: 'mkscon'
+        backendAzureRmResourceGroupName: 'rashi'
+        backendAzureRmStorageAccountName: 'rashistrg'
+        backendAzureRmContainerName: 'rashicont'
+        backendAzureRmKey: 'terraform.tfstate'
+
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/MapProject'
+        environmentServiceNameAzureRM: 'mkscon'
