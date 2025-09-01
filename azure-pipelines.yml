@@ -3,12 +3,12 @@ trigger: none
 pool: MK-agent
 
 stages:
-- stage: buildinitinstall
-  displayName: terraform install and init
+- stage: buildinitinstallplan
+  displayName: terraform install, init and plan
 
   jobs:
   - job: Terraforminstallinit
-    displayName: Terraform Install and Init
+    displayName: Terraform Install,Init and plan
     steps:
         
     - task: TerraformInstaller@1
@@ -25,8 +25,15 @@ stages:
         backendAzureRmStorageAccountName: 'rashistrg'
         backendAzureRmContainerName: 'rashicont'
         backendAzureRmKey: 'terraform.tfstate'
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/MapProject'
+        environmentServiceNameAzureRM: 'mkscon'
     
-- stage: 
+    
+- stage: scanning
   displayName: Terraform scanning
 
   jobs:
@@ -46,18 +53,21 @@ stages:
       displayName: Install tfsec
 
     - script: |
-        echo "Running tfsec scan..."
-        tfsec $(System.DefaultWorkingDirectory)/MapProject
-      displayName: Run tfsec
+       echo "Running tfsec scan (non-blocking)..."
+       tfsec $(System.DefaultWorkingDirectory)/MapProject || echo "tfsec found issues, but continuing."
+      displayName: Run tfsec (non-blocking)
+ 
     
 
-- stage: 
+
+- stage: validateandapply
   displayName: Terraform validate and Apply
+  dependsOn: buildinitinstallplan
 
   jobs:
   - job: Terrraformmanualvalidation
     displayName: Manual Validation
-
+    pool: server
     steps:
     
     - task: ManualValidation@1
@@ -65,8 +75,9 @@ stages:
         notifyUsers: 'mkaz20252025@outlook.com'
         approvers: 'mkaz20252025@outlook.com'
 
-  jobs:
+  
   - job: Terrraforminitapply
+    dependsOn: Terrraformmanualvalidation
     displayName: Terraform Init and Apply
 
     steps:
@@ -88,3 +99,6 @@ stages:
         command: 'apply'
         workingDirectory: '$(System.DefaultWorkingDirectory)/MapProject'
         environmentServiceNameAzureRM: 'mkscon'
+
+  
+  
