@@ -35,8 +35,20 @@ stages:
 
     steps:
 
-    
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
 
+    - script: |
+        echo "Installing tfsec..."
+        curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+      displayName: Install tfsec
+
+    - script: |
+        echo "Running tfsec scan..."
+        tfsec $(System.DefaultWorkingDirectory)/MapProject
+      displayName: Run tfsec
     
 
 - stage: 
