@@ -39,6 +39,8 @@ stages:
   jobs:
   - job: Terraforrscanning
     displayName: Terraform scanning
+    pool:
+     vmImage: 'ubuntu-latest'
 
     steps:
 
