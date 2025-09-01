@@ -44,22 +44,15 @@ stages:
 
     steps:
 
-    - task: UsePythonVersion@0
+    - task: PowerShell@2
+      displayName: Install and Run tfsec
       inputs:
-        versionSpec: '3.x'
-        addToPath: true
-
-    - script: |
-        echo "Installing tfsec..."
-        curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
-      displayName: Install tfsec
-
-    - script: |
-       echo "Running tfsec scan (non-blocking)..."
-       tfsec $(System.DefaultWorkingDirectory)/MapProject || echo "tfsec found issues, but continuing."
-      displayName: Run tfsec (non-blocking)
- 
-    
+       targetType: 'inline'
+       script: |
+        Write-Host "Installing tfsec..."
+        Invoke-WebRequest -Uri "https://github.com/aquasecurity/tfsec/releases/latest/download/tfsec-windows-amd64.exe" -OutFile "tfsec.exe"
+        Write-Host "Running tfsec..." ./tfsec.exe ./MapProject
+      
 
 
 - stage: validateandapply
