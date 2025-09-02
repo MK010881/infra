@@ -1,9 +1,9 @@
 variable "infra-config" {
   sensitive = true
   default = {
-    resource_group_name           = "rashi"
+    resource_group_name           = "rashi-rg"
     resource_group_location       = "westUS"
-    storage_account               = "rashistrg"
+    storage_account               = "rashistrg1"
     account_tier                  = "Standard"
     account_replication_type      = "LRS"
     vnet_name                     = "vnet1"
