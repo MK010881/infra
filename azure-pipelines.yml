@@ -1,4 +1,6 @@
-trigger: none
+trigger:
+- main
+
 
 pool: MK-agent
 
@@ -19,6 +21,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
+        commandOptions: -reconfigure
         workingDirectory: '$(System.DefaultWorkingDirectory)/MapProject'
         backendServiceArm: 'mkscon'
         backendAzureRmResourceGroupName: 'rashi'
@@ -81,6 +84,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
+        commandOptions: -reconfigure
         workingDirectory: '$(System.DefaultWorkingDirectory)/MapProject'
         backendServiceArm: 'mkscon'
         backendAzureRmResourceGroupName: 'rashi'
